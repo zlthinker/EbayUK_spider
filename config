@@ -1,7 +1,7 @@
 name=spider_sdk 搴旂敤鐨勫悕绉� false 0
 desc=鐖櫕鐨剆dk 鎻忚堪 false 0
 jettyport=8001 jetty鐨勭鍙� false 1
-mongo_host=localhost mongodb鐨刪ost false 0
+mongo_host=127.0.0.1 mongodb鐨刪ost false 0
 mongo_port=27017 mongodb鐨勭鍙� false 1
 mongo_user=yuanshuju mongodb鐨勭敤鎴峰悕 false 0
 mongo_pass=123 mongdb鐨勫瘑鐮� false 0
@@ -14,10 +14,9 @@ rabbit_host=106.3.38.50 rabbitmq鐨刪ost false 0
 rabbit_username=yuanshuju rabbitmq鐨勭敤鎴峰悕 false 0
 rabbit_password=123Yuanshuju456 rabbitmq鐨勫瘑鐮� false 0
 read_timeout=120 璇诲彇瓒呮椂锛岀涓哄崟浣� true 1
-spider_database=sogou 鐖櫕鏁版嵁搴� false 0
-spider_meta_table=sogou_meta 鐖櫕琛� false 0
-spider_data_table=sogou_data 鐖櫕鏁版嵁琛� false 0
+spider_database=ebayUK 鐖櫕鏁版嵁搴� false 0
+spider_meta_table=spider_meta 鐖櫕琛� false 0
 TerapeakManageSpider.runNumberThreshold=1 鐖櫕鐨勪竴娆℃渶澶氳繍琛岀殑鏁伴噺 true 1
-TerapeakSpider.runNumberThreshold=10 鐖櫕鐨勪竴娆℃渶澶氳繍琛岀殑鏁伴噺 true 1
+TerapeakSpider.runNumberThreshold=400 鐖櫕鐨勪竴娆℃渶澶氳繍琛岀殑鏁伴噺 true 1
 delta=1000000 鐖櫕杩愯鏃堕棿闂撮殧锛堢锛� true 1
 

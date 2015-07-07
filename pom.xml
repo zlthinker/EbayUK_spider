@@ -2,17 +2,56 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>terapeak_spider</groupId>
-  <artifactId>test</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+
+
+  <groupId>org.epiclouds</groupId>
+  <artifactId>ebayUK_category_spider</artifactId>
+  <version>1.0</version>
   <packaging>jar</packaging>
 
-  <name>test</name>
-  <url>http://maven.apache.org</url>
+  <name>ebayUK_category_spider</name>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
+
+  <build>
+    <plugins>
+      <plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.1</version>
+				<configuration>
+					<source>1.7</source>
+					<target>1.7</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.4</version>
+				<configuration>
+					<appendAssemblyId>false</appendAssemblyId>
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
+					<archive>
+						<manifest>
+							<mainClass>org.epiclouds.main.TerapeakSpiderStart</mainClass>
+						</manifest>
+					</archive>
+				</configuration>
+				<executions>
+					<execution>
+						<id>make-assembly</id>
+						<phase>install</phase>
+						<goals>
+							<goal>assembly</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+     
+    </plugins>
+  </build>
 
   <dependencies>
   	<dependency>

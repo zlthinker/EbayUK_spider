@@ -1,24 +1,26 @@
-package terapeak_spider.test;
+package org.epiclouds.spider;
 
 import java.util.List;
 
+import org.epiclouds.bean.SearchBean;
 import org.epiclouds.handlers.AbstractHandler;
 import org.epiclouds.spiders.dbstorage.condition.impl.EqualCondition;
 import org.epiclouds.spiders.dbstorage.manager.abstracts.DBMangerInterface;
 import org.epiclouds.spiders.dbstorage.manager.abstracts.StorageBean;
 import org.epiclouds.spiders.dbstorage.manager.abstracts.StorageBean.OperationType;
 import org.epiclouds.spiders.spiderobject.abstracts.AbstractSpiderObject;
+import org.epiclouds.bean.CategoryBean;
 
 public class TerapeakManageSpider extends AbstractSpiderObject{
 
 	private List<CategoryBean> resultList;
 	
 	public TerapeakManageSpider(AbstractSpiderObject parent, int totalSpiderNum) {
-		super(parent, totalSpiderNum);
+		super(parent);
 	}
 	
 	public TerapeakManageSpider() {
-		super(null, 1);
+		super(null);
 	}
 	
 	@Override
@@ -36,20 +38,29 @@ public class TerapeakManageSpider extends AbstractSpiderObject{
 			e.printStackTrace();
 		}
 		
+		if(resultList == null || resultList.isEmpty()) {
+			super.stop();
+			return;
+		}
+		
 		for(CategoryBean cb : resultList) {
-			System.out.println("CategorySpider " + cb.getId() + " is added.");
+	//		System.out.println("CategorySpider " + cb.getId() + " is added.");
 			SearchBean sbean = new SearchBean();
 			sbean.setId(cb.getId());
 			sbean.setSiteID("3");
-			sbean.setDate_range(7);
+			sbean.setDate_range(80);
 			sbean.setCurrency("1");			
 			TerapeakSpider ts = new TerapeakSpider(cb, this, 1, sbean);
 			this.addChild(ts);			
 		}
 	}
 	
-	@Override
 	public AbstractHandler createSpiderHandler() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public String getInfo() {
 		// TODO Auto-generated method stub
 		return null;
 	}

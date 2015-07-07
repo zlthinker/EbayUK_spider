@@ -1,4 +1,4 @@
-package terapeak_spider.test;
+package org.epiclouds.bean;
 
 public class SearchBean {
 	private volatile String id;

@@ -1,13 +1,12 @@
-package terapeak_spider.test;
+package org.epiclouds.spider;
 
 import io.netty.handler.codec.http.HttpMethod;
 
-import java.net.InetSocketAddress;
-import java.util.Map;
-
+import org.epiclouds.bean.SearchBean;
+import org.epiclouds.handler.TerapeakItemHandler;
 import org.epiclouds.handlers.AbstractHandler;
-import org.epiclouds.handlers.util.ProxyStateBean;
 import org.epiclouds.spiders.spiderobject.abstracts.AbstractSpiderObject;
+import org.epiclouds.bean.CategoryBean;
 
 public class TerapeakSpider extends AbstractSpiderObject{
 	private String host = "sell.terapeak.com";
@@ -19,7 +18,7 @@ public class TerapeakSpider extends AbstractSpiderObject{
 	
 	public TerapeakSpider(CategoryBean cb,
 			AbstractSpiderObject parent, int totalSpiderNum, SearchBean sb) {
-		super(parent, totalSpiderNum);
+		super(parent);
 		this.cb = cb;
 		this.sb = sb;
 	}
@@ -28,10 +27,16 @@ public class TerapeakSpider extends AbstractSpiderObject{
 		super();
 	}
 
-	@Override
+
 	public AbstractHandler createSpiderHandler() {
 		// TODO Auto-generated method stub
 		return new TerapeakItemHandler(host, URL, HttpMethod.POST, this, days, num, sb, cb);
+	}
+
+
+	public String getInfo() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

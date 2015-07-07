@@ -1,4 +1,5 @@
-package terapeak_spider.test;
+package org.epiclouds.bean;
+
 
 import java.util.List;
 

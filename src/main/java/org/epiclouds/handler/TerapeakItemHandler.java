@@ -1,13 +1,20 @@
-package terapeak_spider.test;
+package org.epiclouds.handler;
 
+import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpMethod;
 
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import org.epiclouds.bean.CommonData;
+import org.epiclouds.bean.DataBean;
+import org.epiclouds.bean.SearchBean;
+import org.epiclouds.bean.TerapeakBean;
+import org.epiclouds.bean.CategoryBean;
 import org.epiclouds.handlers.AbstractNettyCrawlerHandler;
 import org.epiclouds.handlers.util.ProxyStateBean;
 import org.epiclouds.spiders.spiderobject.abstracts.AbstractSpiderObject;
@@ -91,15 +98,15 @@ public class TerapeakItemHandler extends AbstractNettyCrawlerHandler{
 		HashMap<String,String> pd=new HashMap<String,String>();
 		pd.put(null, JSONObject.toJSONString(getSearchBean()));
 	    this.setPostdata(pd);
-	    System.out.println("In TerapeakItemHandler: postdata is "+pd);
-	    System.out.println("CategorySpider " + eb.getId() + "'s handler is created.");
+//	    System.out.println("In TerapeakItemHandler: postdata is "+pd);
+//	    System.out.println("CategorySpider " + eb.getId() + "'s handler is created.");
 		// TODO Auto-generated constructor stub
 	}
 	
 	public void handle(String content) throws Exception {
 		// TODO Auto-generated method stub
 	//	System.out.println("Id "+this.getEb().getId() + ": content="+content);
-		System.out.println("No."+i+" Id "+this.getEb().getId() + "is in handle");
+		System.out.println("No."+i+" Id "+this.getEb().getId() + " is in handle");
 		if(i<=num+1){
         	TerapeakBean tmp=JSONObject.parseObject(content,TerapeakBean.class);
         	formatTerapeakCategorySoldData(tmp);
@@ -201,7 +208,7 @@ public class TerapeakItemHandler extends AbstractNettyCrawlerHandler{
         	}
         }
 		if(i>num){
-			//System.err.println(JSONObject.toJSONString(tb));
+			System.err.println("CategorySpider "+this.getEb().getId() + " handle finished.");
 			super.stop();
 			return;
 		}
@@ -231,13 +238,14 @@ public class TerapeakItemHandler extends AbstractNettyCrawlerHandler{
 		}
 
 		if (re == null || re.isEmpty()) {
-			this.getSpider().finish();
+	//		this.getSpider().finish();
+			System.out.println("CategorySpider " + this.getEb().getId() + " new data in on before.");
 			return;
 		}
 		if(re.size()>0){
 			//System.err.println("data is "+ (String)re.get(0).get("data"));
 			TerapeakBean tb=re.get(0).getData();
-//			this.setTb(tb);
+			dbb.setData(tb);
 			if(tb.getAverage_end_price().getData().size()>0){
 				Object[] obs=tb.getAverage_end_price().getData().get(tb.getAverage_end_price().getData().size()-1);
 				DateTime ntime=new DateTime();
@@ -263,7 +271,36 @@ public class TerapeakItemHandler extends AbstractNettyCrawlerHandler{
 		System.out.println("CategorySpider " + this.getEb().getId() + " on before.");
 	}
 
-
+	public void onError(Object response){
+		FullHttpResponse cres=(FullHttpResponse)response;
+		String ss=cres.content().toString(Charset.forName("utf-8"));
+		if(cres!=null&&cres.status().code()==500&&
+				(ss.contains("GetCategoryTrends is empty")||ss.contains("TrendData is empty"))){
+			
+			super.stop();
+			System.out.println("CategorySpider " + this.getEb().getId() + " on Error stopped.");
+			return;
+			/*if(i>num){
+				this.stop();
+				return;
+			}*/
+			/*JSONObject.parseObject(ss);
+			this.setErrorNum(this.getErrorNum()-1);
+			SearchBean sb=getSearchBean();
+	        HashMap<String,String> pd=new HashMap<String,String>();
+	        pd.put(null, JSONObject.toJSONString(sb));
+			try {
+				request("/services/ebay/categories/trends?token=4"
+						+ "e5396e3fe80ee1249a0b8147c08c5636a95579b274624fc6ce568ef3d2cdde5", HttpMethod.POST, 
+						hs, pd, "https");
+			} catch (Exception e) {
+				e.printStackTrace();
+			}*/
+		}else{
+			super.onError(response);
+		}
+	}
+	
 	@Override
 	protected void onNormalFinished() {
 		// TODO Auto-generated method stub
@@ -275,7 +312,7 @@ public class TerapeakItemHandler extends AbstractNettyCrawlerHandler{
 	protected void onDataFinished() {
 		// TODO Auto-generated method stub
 		try {
-			System.err.println("In onDataFinished: save data.");
+//			System.err.println("In onDataFinished: save data.");
 			TerapeakBean tb=dbb.getData();
 			if((tb!=null&&tb.getAverage_end_price()!=null&&tb.getAverage_end_price().getData()!=null&&
 					tb.getAverage_end_price().getData().size()>0)){
@@ -284,17 +321,13 @@ public class TerapeakItemHandler extends AbstractNettyCrawlerHandler{
 				dbb.setCatch_time(new DateTime().toString("yyyy-MM-dd HH:mm:ss"));
 				EqualCondition<Object> con = new EqualCondition<Object>("id", eb.getId());
 				builder.addConditon(con);			
-				storage(builder, dbb);
+				this.getSpider().getDbmanager().storage(builder, dbb);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.err.println("In onDataFinished: exception happens.");
 		}
-		try {
-			super.stop();
-		} catch (Exception e) {
-		}
-		System.err.println("onDataFinished :"+eb.getId());
+		System.err.println("CategorySpider " + this.getEb().getId() + " onDataFinished.");
 	}
 	
 	private void formatTerapeakCategorySoldData(TerapeakBean tmp) {
