@@ -283,18 +283,18 @@ public class TerapeakItemHandler extends AbstractNettyCrawlerHandler{
 	/*		super.stop();
 			System.out.println("CategorySpider " + this.getEb().getId() + " on Error stopped.");
 			return;*/
-
-			if(i>num){
-				super.stop();
-				return;
-			}
 			
 			if(errornum <5) {
 				requestSelf();
-				System.out.println(errornum+": "+this.getEb().getId()+"'s another try");
+				System.out.println("Errornum"+errornum+": "+this.getEb().getId()+"'s another try");
 				errornum ++;
+				return;
 			}
 			else {
+				if(i>num){
+					super.stop();
+					return;
+				}
 				errornum = 0;
 				System.err.println("CategorySpider " + this.getEb().getId() + ": Page"+i+" is on error after five try.");
 				SearchBean sb=getSearchBean();
