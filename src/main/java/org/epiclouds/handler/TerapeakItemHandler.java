@@ -38,7 +38,9 @@ public class TerapeakItemHandler extends AbstractNettyCrawlerHandler{
 	private volatile SearchBean sr;
 	private volatile CategoryBean eb;
 	public volatile static HashMap<String,String> hs;
+	private volatile int errornum=0;
 
+	
 	public SearchBean getSr() {
 		return sr;
 	}
@@ -92,7 +94,7 @@ public class TerapeakItemHandler extends AbstractNettyCrawlerHandler{
 		this.num=num;
 		this.sr=sb;
 		this.eb=eb;
-		dbb.setData(new TerapeakBean());
+//		dbb.setData(new TerapeakBean());
 		dbb.setId(eb.getId());
 		dbb.setName(eb.getName());
 		HashMap<String,String> pd=new HashMap<String,String>();
@@ -107,6 +109,7 @@ public class TerapeakItemHandler extends AbstractNettyCrawlerHandler{
 		// TODO Auto-generated method stub
 	//	System.out.println("Id "+this.getEb().getId() + ": content="+content);
 		System.out.println("No."+i+" Id "+this.getEb().getId() + " is in handle");
+		errornum = 0;
 		if(i<=num+1){
         	TerapeakBean tmp=JSONObject.parseObject(content,TerapeakBean.class);
         	formatTerapeakCategorySoldData(tmp);
@@ -120,7 +123,7 @@ public class TerapeakItemHandler extends AbstractNettyCrawlerHandler{
         	}*/
         	TerapeakBean tb=dbb.getData();
         	DateTime otime=null;
-        	if(tb.getAverage_end_price()!=null&&tb.getAverage_end_price().getData().size()>0){
+        	if(tb!=null&&tb.getAverage_end_price()!=null&&tb.getAverage_end_price().getData().size()>0){
 				Object[] obs=tb.getAverage_end_price().getData().get(
 						tb.getAverage_end_price().getData().size()-1);
 				otime=DateTime.parse(((String)obs[0]).split(" ")[0],DateTimeFormat.forPattern("yyyy/MM/dd"));	
@@ -277,13 +280,34 @@ public class TerapeakItemHandler extends AbstractNettyCrawlerHandler{
 		if(cres!=null&&cres.status().code()==500&&
 				(ss.contains("GetCategoryTrends is empty")||ss.contains("TrendData is empty"))){
 			
-			super.stop();
+	/*		super.stop();
 			System.out.println("CategorySpider " + this.getEb().getId() + " on Error stopped.");
-			return;
-			/*if(i>num){
-				this.stop();
+			return;*/
+
+			if(i>num){
+				super.stop();
 				return;
-			}*/
+			}
+			
+			if(errornum <5) {
+				requestSelf();
+				System.out.println(errornum+": "+this.getEb().getId()+"'s another try");
+				errornum ++;
+			}
+			else {
+				errornum = 0;
+				System.err.println("CategorySpider " + this.getEb().getId() + ": Page"+i+" is on error after five try.");
+				SearchBean sb=getSearchBean();
+		        HashMap<String,String> pd=new HashMap<String,String>();
+		        pd.put(null, JSONObject.toJSONString(sb));
+				try {
+					request("/services/ebay/categories/trends?token=4"
+							+ "e5396e3fe80ee1249a0b8147c08c5636a95579b274624fc6ce568ef3d2cdde5", HttpMethod.POST, 
+							hs, pd, "https");
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
 			/*JSONObject.parseObject(ss);
 			this.setErrorNum(this.getErrorNum()-1);
 			SearchBean sb=getSearchBean();

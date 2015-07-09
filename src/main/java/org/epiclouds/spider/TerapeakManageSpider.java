@@ -39,7 +39,7 @@ public class TerapeakManageSpider extends AbstractSpiderObject{
 		}
 		
 		if(resultList == null || resultList.isEmpty()) {
-			super.stop();
+			finish();
 			return;
 		}
 		
